@@ -26,7 +26,7 @@ function Hero() {
           <div>
             <Link 
               to="/booking"
-              className="inline-block px-8 py-4 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 transition-colors shadow-md text-lg"
+              className="inline-block px-8 py-4 bg-blue-900 text-white rounded-2xl hover:bg-blue-600 transition-colors shadow-md text-lg"
             >
               Come Fly With Us
             </Link>

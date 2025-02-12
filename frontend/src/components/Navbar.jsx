@@ -29,7 +29,7 @@ function Navbar() {
             <Link to="/about" className={`hover:text-blue-600 ${isActive('/about')}`}>About</Link>
             <Link to="/contact" className={`hover:text-blue-600 ${isActive('/contact')}`}>Contact</Link>
             <Link to="/login" className="px-4 py-2  hover:text-blue-600">Login</Link>
-            <Link to="/signup" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            <Link to="/signup" className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-600 transition-colors">
               Sign Up
             </Link>
           </div>
@@ -79,7 +79,7 @@ function Navbar() {
             Login
           </Link>
           <div className="flex justify-center px-2">
-            <Link to="/signup" className="block w-full max-w-xs px-3 py-2 bg-blue-500 text-white rounded-lg text-center hover:bg-blue-600 transition-colors">
+            <Link to="/signup" className="block w-full max-w-xs px-3 py-2 bg-blue-900 text-white rounded-lg text-center hover:bg-blue-600 transition-colors">
               Sign Up
             </Link>
           </div>

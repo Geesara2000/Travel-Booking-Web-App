@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Login() {
+function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    fullName: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
 
@@ -19,24 +21,41 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log('Login submitted:', formData);
+    // Add your signup logic here
+    console.log('Signup submitted:', formData);
   };
 
-  const handleGoogleSignIn = () => {
-    // Add Google sign-in logic here
-    console.log('Google sign-in clicked');
+  const handleGoogleSignUp = () => {
+    // Add Google sign-up logic here
+    console.log('Google sign-up clicked');
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-md p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="mt-2 text-gray-600">Please sign in to your account</p>
+          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+          <p className="mt-2 text-gray-600">Join us and start exploring</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+              Full Name
+            </label>
+            <input
+              id="fullName"
+              name="fullName"
+              type="text"
+              required
+              value={formData.fullName}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your full name"
+            />
+            {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+          </div>
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
@@ -67,7 +86,7 @@ function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
+                placeholder="Create a password"
               />
               <button
                 type="button"
@@ -89,19 +108,28 @@ function Login() {
             {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <Link to="/forgot-password" className="text-blue-900 hover:text-blue-600">
-                Forgot your password?
-              </Link>
-            </div>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Confirm your password"
+            />
+            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
           </div>
 
           <button
             type="submit"
             className="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-900 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
-            Login
+            Sign Up
           </button>
 
           <div className="relative my-6">
@@ -115,7 +143,7 @@ function Login() {
 
           <button
             type="button"
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleSignUp}
             className="w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center justify-center space-x-2"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -136,14 +164,14 @@ function Login() {
                 fill="#EA4335"
               />
             </svg>
-            <span>Sign in with Google</span>
+            <span>Sign up with Google</span>
           </button>
 
           <div className="text-center mt-4">
-            <span className="text-gray-600">Don't have an account?</span>
+            <span className="text-gray-600">Already have an account?</span>
             {' '}
-            <Link to="/signup" className="text-blue-900 hover:text-blue-600 font-medium">
-              Sign up
+            <Link to="/login" className="text-blue-900 hover:text-blue-600 font-medium">
+              Login
             </Link>
           </div>
         </form>
@@ -152,4 +180,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

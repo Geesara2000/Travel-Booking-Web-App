@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 function Tours() {
   // Search and filter states
@@ -144,6 +145,7 @@ function Tours() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -285,7 +287,7 @@ function Tours() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Sort by</option>
+                <option value="" disabled selected>Sort by</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
               </select>
@@ -347,6 +349,8 @@ function Tours() {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 

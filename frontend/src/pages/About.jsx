@@ -1,3 +1,5 @@
+import Footer from "../components/Footer";
+
 function About() {
   const team = [
     {
@@ -18,6 +20,7 @@ function About() {
   ];
 
   return (
+   <>
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="bg-blue-900 text-white py-20">
@@ -109,6 +112,8 @@ function About() {
         </div>
       </section>
     </div>
+    <Footer/>
+   </>
   );
 }
 

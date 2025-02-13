@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +30,7 @@ function Login() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-md p-8">
         <div className="text-center mb-8">
@@ -149,6 +151,8 @@ function Login() {
         </form>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 

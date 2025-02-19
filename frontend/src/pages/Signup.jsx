@@ -1,35 +1,59 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { apiUrl } from './http';
+import { toast } from 'react-toastify'
 import Footer from '../components/Footer';
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+   const {
+      register,
+      handleSubmit,
+      watch,
+      formState: { errors }
+    } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your signup logic here
-    console.log('Signup submitted:', formData);
+  
+  const onSubmit = async (data) => {
+    try {
+      // Destructure confirmPassword out and send the rest of the data
+      const { confirmPassword, ...requestData } = data;
+  
+      const res = await fetch(apiUrl + 'register', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+  
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const result = await res.json();
+      console.log(result);
+  
+      if (result.status === true) {
+        toast.success(result.message);
+        navigate('/login');
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error('An error occurred during registration. Please try again later.');
+    }
   };
+  
+  
 
-  const handleGoogleSignUp = () => {
-    // Add Google sign-up logic here
-    console.log('Google sign-up clicked');
-  };
+  // const handleGoogleSignUp = () => {
+  //   // Add Google sign-up logic here
+  //   console.log('Google sign-up clicked');
+  // };
 
   return (
     <>
@@ -40,22 +64,20 @@ function Signup() {
           <p className="mt-2 text-gray-600">Join us and start exploring</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Full Name
             </label>
             <input
-              id="fullName"
-              name="fullName"
+              id="name"
+              name="name"
               type="text"
-              required
-              value={formData.fullName}
-              onChange={handleChange}
+              {...register("name", { required: "Name is required" })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your full name"
             />
-            {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
           </div>
 
           <div>
@@ -66,13 +88,11 @@ function Signup() {
               id="email"
               name="email"
               type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email", { required: "Email is required" })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your email"
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -84,9 +104,10 @@ function Signup() {
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                required
-                value={formData.password}
-                onChange={handleChange}
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: { value: 6, message: 'Password must be at least 6 characters' },
+                })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Create a password"
               />
@@ -107,7 +128,7 @@ function Signup() {
                 )}
               </button>
             </div>
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
           </div>
 
           <div>
@@ -118,23 +139,26 @@ function Signup() {
               id="confirmPassword"
               name="confirmPassword"
               type={showPassword ? "text" : "password"}
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) => value === watch("password") || "Passwords do not match",
+              })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Confirm your password"
             />
-            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
           </div>
+          
 
           <button
+            
             type="submit"
             className="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-900 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
             Sign Up
           </button>
 
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
@@ -167,9 +191,9 @@ function Signup() {
               />
             </svg>
             <span>Sign up with Google</span>
-          </button>
+          </button> */}
 
-          <div className="text-center mt-4">
+           <div className="text-center mt-4">
             <span className="text-gray-600">Already have an account?</span>
             {' '}
             <Link to="/login" className="text-blue-900 hover:text-blue-600 font-medium">

@@ -1,33 +1,65 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import { toast } from 'react-toastify'
+import { AuthContext } from '../context/Auth';
+import { apiUrl } from './http';
 import Footer from '../components/Footer';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const {login} = useContext(AuthContext);
+  
+   // Initialize react-hook-form
+   const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  // Submit Handler
+  const onSubmit = async (data) => {
+    try {
+      console.log('Login submitted:', data);
+      const res = await fetch(apiUrl + 'login', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const result = await res.json();
+      console.log(result);
+  
+      if (result.status === false) {
+        toast.error(result.message);
+      } else {
+        toast.success(result.message);
+        const userInfo = {
+          id: result.id,
+          token: result.token,
+        };
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        login(userInfo);
+        navigate('/booking/:tourId');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      toast.error('An error occurred during login. Please try again later.');
+    }
   };
+  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your login logic here
-    console.log('Login submitted:', formData);
-  };
-
-  const handleGoogleSignIn = () => {
-    // Add Google sign-in logic here
-    console.log('Google sign-in clicked');
-  };
+  // const handleGoogleSignIn = () => {
+  //   // Add Google sign-in logic here
+  //   console.log('Google sign-in clicked');
+  // };
 
   return (
     <>
@@ -38,22 +70,19 @@ function Login() {
           <p className="mt-2 text-gray-600">Please sign in to your account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your email"
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                id="email"
+                type="email"
+                {...register("email", { required: "Email is required" })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your email"
+              />
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -61,16 +90,13 @@ function Login() {
               Password
             </label>
             <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
-              />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  {...register("password", { required: "Password is required" })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your password"
+                />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -88,16 +114,17 @@ function Login() {
                 )}
               </button>
             </div>
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
           </div>
 
-          <div className="flex items-center justify-between">
+
+          {/* <div className="flex items-center justify-between">
             <div className="text-sm">
               <Link to="/forgot-password" className="text-blue-900 hover:text-blue-600">
                 Forgot your password?
               </Link>
             </div>
-          </div>
+          </div> */}
 
           <button
             type="submit"
@@ -106,7 +133,7 @@ function Login() {
             Login
           </button>
 
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
@@ -139,9 +166,9 @@ function Login() {
               />
             </svg>
             <span>Sign in with Google</span>
-          </button>
+          </button> */}
 
-          <div className="text-center mt-4">
+           <div className="text-center mt-4">
             <span className="text-gray-600">Don't have an account?</span>
             {' '}
             <Link to="/signup" className="text-blue-900 hover:text-blue-600 font-medium">

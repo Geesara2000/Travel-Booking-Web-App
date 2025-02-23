@@ -10,39 +10,6 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
-
-
-    // public function register(Request $request){
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|email|unique:users,email|max:255',
-    //         'password' => 'required|string|min:6|max:255'
-    //     ]);
-
-    //     try {
-    //         $user = User::create([
-    //             'name' => $request->name,
-    //             'email' => $request->email,
-    //             'password' => Hash::make($request->password)
-    //         ]);
-
-    //         if ($user) {
-    //             $token = $user->createToken($user->name . 'Auth-Token')->plainTextToken;
-    //             return response()->json([
-    //                 'status' => true,
-    //                 'message' => 'Registration successful',
-    //                 'token_type' => 'Bearer',
-    //                 'token' => $token
-    //             ]);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Something went wrong during registration'
-    //         ]);
-    //     }
-    // }
-
     public function register(Request $request)
 {
     try {
@@ -106,6 +73,7 @@ class UserController extends Controller
             'message' => 'Login successful',
             'token_type' => 'Bearer',
             'id' => $user->id,
+            'role' => $user->role,
             'token' => $token
         ]);
     } catch (\Exception $e) {

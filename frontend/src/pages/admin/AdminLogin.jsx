@@ -1,61 +1,55 @@
 import { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from "react-hook-form";
-import { toast } from 'react-toastify'
-import { AuthContext } from '../context/Auth';
-import { apiUrl } from './http';
-import Navbar from '../components/Navbar';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../http';
+import { toast } from 'react-toastify';
+import { AuthContext } from '../../context/Auth';
 
-function Login() {
+
+function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const {loginUser} = useContext(AuthContext);
-   // Initialize react-hook-form
-   const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm();
+  const {loginAdmin} = useContext(AuthContext);
+ 
+  const {
+      register,
+      handleSubmit,
+      formState: { errors }
+    } = useForm();
 
-  // Submit Handler
   const onSubmit = async (data) => {
-    console.log('Login submitted:', data);
-    const res = await fetch(apiUrl+'login',{
-      method : 'POST',
-      headers: {
-        'Content-type' : 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    const result = await res.json();
-    console.log(result)
+      console.log('Login submitted:', data);
+      const res = await fetch(apiUrl+'admin/login',{
+        method : 'POST',
+        headers: {
+          'Content-type' : 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
   
+      const result = await res.json();
+      console.log(result)
+      
 
-    if (result.status) {
-      const userInfo = { id: result.id, token: result.token, role: result.role };
-      loginUser(userInfo);
-
-      if (result.role === "user") {
+      if (result.status && result.role === "admin") {
+        const adminInfo = { id: result.id, token: result.token, role: result.role };
+        loginAdmin(adminInfo);
         toast.success(result.message)
-        navigate("/booking");
+        navigate("/admin/dashboard");
       } else {
-        navigate("/"); // Prevent admins from logging in here
+        toast.error(result.message);
       }
-    } else {
-      toast.error(result.message)
+  
     }
 
-  }
- 
   return (
     <>
-    <Navbar/>
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+   
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-md p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="mt-2 text-gray-600">Please sign in to your account</p>
+          <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
+          <p className="mt-2 text-gray-600">Sign in to access the admin panel</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -64,13 +58,14 @@ function Login() {
               Email
             </label>
             <input
-                id="email"
-                type="email"
-                {...register("email", { required: "Email is required" })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+              id="email"
+              name="email"
+              type="email"
+              {...register("email", { required: "Email is required" })}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your email"
+            />
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -105,29 +100,17 @@ function Login() {
             {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
           </div>
 
-     
-
           <button
             type="submit"
             className="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-900 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
             Login
           </button>
-
-
-          <div className="text-center mt-4">
-            <span className="text-gray-600">Don't have an account?</span>
-            {' '}
-            <Link to="/signup" className="text-blue-900 hover:text-blue-600 font-medium">
-              Sign up
-            </Link>
-          </div>
         </form>
       </div>
     </div>
-
     </>
   );
 }
 
-export default Login;
+export default AdminLogin;

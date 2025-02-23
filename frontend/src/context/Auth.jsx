@@ -1,26 +1,57 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+
 export const AuthContext = createContext(null);
 
-export const AuthProvider = ({children}) => {
-  const userInfo = localStorage.getItem('userInfo');
-  const [user, setUser] = useState(userInfo);
+export const AuthProvider = ({ children }) => {
+  // Retrieve user and admin info from local storage
+  const storedUserInfo = localStorage.getItem("userInfo");
+  const storedAdminInfo = localStorage.getItem("adminInfo");
 
-  const login = (user) => {
-    setUser(user)
-  }
+  // Parse JSON data if available
+  const [user, setUser] = useState(storedUserInfo ? JSON.parse(storedUserInfo) : null);
+  const [admin, setAdmin] = useState(storedAdminInfo ? JSON.parse(storedAdminInfo) : null);
 
-  const logout = () => {
-    localStorage.removeItem('userInfo');
+  // Login function for users
+  const loginUser = (userData) => {
+    console.log("user login")
+    localStorage.setItem("userInfo", JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  // Logout function for users
+  const logoutUser = () => {
+    console.log("user logout")
+    localStorage.removeItem("userInfo");
     setUser(null);
-  }
+  };
 
-  return(
-    <AuthContext.Provider value={{ 
-      user,
-      login,
-      logout
-     }}>
-        {children}
+  // Login function for admins
+  const loginAdmin = (adminData) => {
+    console.log("admin login")
+    localStorage.setItem("adminInfo", JSON.stringify(adminData));
+    setAdmin(adminData);
+  };
+
+  // Logout function for admins
+  const logoutAdmin = () => {
+    console.log("admin logout")
+    localStorage.removeItem("adminInfo");
+    setAdmin(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        admin,
+        loginUser,
+        logoutUser,
+        loginAdmin,
+        logoutAdmin,
+      }}
+    >
+      {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
+

@@ -13,14 +13,16 @@ import Terms from './pages/Terms';
 import RequireAuth from './components/RequireAuth';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/Auth';  // Fixed: Import AuthProvider
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
     <AuthProvider> {/* Wrapped entire app inside AuthProvider */}
       <BrowserRouter>
         <div className="min-h-screen">
-          <Navbar />
           <Routes>
+            {/* User Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/tours" element={<Tours />} />
             <Route path="/tours/:id" element={<TourDetails />} />
@@ -33,11 +35,19 @@ function App() {
             
           
 
-            <Route path="/booking/:tourId" element={
-              <RequireAuth>
-                <Booking />
-              </RequireAuth>
-            } />
+            <Route path="/booking" element={
+            <RequireAuth allowedRoles={["user"]}>
+              <Booking />
+            </RequireAuth>
+          } />
+
+           {/* Admin Routes */}
+           <Route path="/admin/login" element={<AdminLogin/>} />
+          <Route path="/admin/dashboard" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <AdminDashboard/>
+            </RequireAuth>
+          } />
 
           </Routes>
         </div>

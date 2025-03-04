@@ -1,59 +1,43 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { FaFilter } from 'react-icons/fa'; // Importing the filter icon from react-icons
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
+import { apiUrl, imageUrl } from '../pages/http';
 
 function Tours() {
-  // Search and filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('');
-  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filteredTours, setFilteredTours] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data
-  const tours = [
-    {
-      id: 1,
-      title: "Mountain Trek Adventure",
-      image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3",
-      description: "Experience the thrill of mountain climbing with expert guides.",
-      price: 299,
-      duration: "3 days",
-      difficulty: "Moderate",
-      location: "Swiss Alps",
-      type: "Adventure"
-    },
-    {
-      id: 2,
-      title: "Beach Paradise Getaway",
-      image: "https://images.unsplash.com/photo-1520116468816-95b69f847357?ixlib=rb-4.0.3",
-      description: "Relax on pristine beaches with crystal clear waters.",
-      price: 399,
-      duration: "5 days",
-      difficulty: "Easy",
-      location: "Maldives",
-      type: "Beach"
-    },
-    {
-      id: 3,
-      title: "City Explorer Package",
-      image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3",
-      description: "Discover hidden gems in the world's most vibrant cities.",
-      price: 199,
-      duration: "2 days",
-      difficulty: "Easy",
-      location: "Paris",
-      type: "Cultural"
-    }
-  ];
+  // Fetch tours from backend
+  useEffect(() => {
+    const fetchTours = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}tours`);
+        if (!response.ok) throw new Error('Failed to fetch tours');
+        const data = await response.json();
+        setTours(data);
+        setFilteredTours(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const locations = ["Swiss Alps", "Maldives", "Paris", "Tokyo", "New York"];
-  const durations = ["1-3 days", "4-7 days", "8+ days"];
-  const tourTypes = ["Adventure", "Beach", "Cultural", "Wildlife"];
+    fetchTours();
+  }, []);
 
   // Debounced search function
   const debounce = (func, wait) => {
@@ -84,36 +68,30 @@ function Tours() {
   // Filter tours based on selected criteria and search query
   useEffect(() => {
     setIsSearching(true);
-    
+
     const debouncedFilter = debounce(() => {
       let result = [...tours];
 
-      // Apply search
       if (searchQuery) {
         result = searchTours(searchQuery, result);
       }
 
-      // Price range filter
       result = result.filter(tour => 
         tour.price >= priceRange.min && tour.price <= priceRange.max
       );
 
-      // Location filter
       if (selectedLocation) {
         result = result.filter(tour => tour.location === selectedLocation);
       }
 
-      // Duration filter
       if (selectedDuration) {
         result = result.filter(tour => tour.duration.includes(selectedDuration));
       }
 
-      // Tour type filter
-      if (selectedTypes.length > 0) {
-        result = result.filter(tour => selectedTypes.includes(tour.type));
+      if (selectedType) { // Apply filter for selected type
+        result = result.filter(tour => tour.type === selectedType);
       }
 
-      // Sorting
       if (sortBy === 'price-low') {
         result.sort((a, b) => a.price - b.price);
       } else if (sortBy === 'price-high') {
@@ -125,199 +103,178 @@ function Tours() {
     }, 300);
 
     debouncedFilter();
-  }, [searchQuery, priceRange, selectedLocation, selectedDuration, selectedTypes, sortBy, searchTours]);
-
-  const handleTypeToggle = (type) => {
-    setSelectedTypes(prev => 
-      prev.includes(type)
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
-    );
-  };
+  }, [searchQuery, priceRange, selectedLocation, selectedDuration, selectedType, sortBy, searchTours, tours]);
 
   const clearFilters = () => {
     setSearchQuery('');
     setPriceRange({ min: 0, max: 1000 });
     setSelectedLocation('');
     setSelectedDuration('');
-    setSelectedTypes([]);
+    setSelectedType('');
     setSortBy('');
   };
 
   return (
     <>
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Available Tours</h1>
-          <p className="text-xl text-gray-600">Find your perfect adventure</p>
-        </div>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row">
+          
+         
+         {/* Filter Section (Left Side) */}
+         <div className="w-full lg:w-1/4 mb-6 lg:mb-0 lg:mr-8">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-600 w-full mb-6 flex items-center justify-center"
+            >
+              <FaFilter className="mr-2" /> 
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+            </button>
 
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tours by name, location, or type..."
-              className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-4">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm flex items-center justify-center space-x-2"
-          >
-            <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
-          </button>
-        </div>
-
-        <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Filters Sidebar */}
-          <div className={`lg:block ${showFilters ? 'block' : 'hidden'} mb-8 lg:mb-0`}>
-            <div className="bg-white p-6 rounded-xl shadow-md space-y-6">
-              {/* Price Range */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Price Range</h3>
-                <div className="space-y-2">
+            {showFilters && (
+              <div className="bg-white p-6 rounded-lg  shadow-md">
+                <div className="space-y-4">
+                  {/* Search */}
                   <input
-                    type="range"
-                    min="0"
-                    max="1000"
-                    value={priceRange.max}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
-                    className="w-full"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search tours..."
+                    className="w-full p-2 border border-gray-300 rounded-md"
                   />
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>$0</span>
+
+                  {/* Price Range */}
+                  <div className="flex justify-between items-center">
+                    <label>Price Range</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1000"
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                      className="w-2/3"
+                    />
                     <span>${priceRange.max}</span>
                   </div>
+
+                  {/* Location */}
+                  <select
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="">Select Location</option>
+                    <option value="Ampara">Ampara</option>
+                    <option value="Anuradhapura">Anuradhapura</option>
+                    <option value="Badulla">Badulla</option>
+                    <option value="Batticaloa">Batticaloa</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Galle">Galle</option>
+                    <option value="Gampaha">Gampaha</option>
+                    <option value="Hambantota">Hambantota</option>
+                    <option value="Jaffna">Jaffna</option>
+                    <option value="Kalutara">Kalutara</option>
+                    <option value="Kandy">Kandy</option>
+                    <option value="Kegalle">Kegalle</option>
+                    <option value="Kilinochchi">Kilinochchi</option>
+                    <option value="Kurunegala">Kurunegala</option>
+                    <option value="Mannar">Mannar</option>
+                    <option value="Matale">Matale</option>
+                    <option value="Matara">Matara</option>
+                    <option value="Monaragala">Monaragala</option>
+                    <option value="Mullaitivu">Mullaitivu</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                    <option value="Polonnaruwa">Polonnaruwa</option>
+                    <option value="Puttalam">Puttalam</option>
+                    <option value="Ratnapura">Ratnapura</option>
+                    <option value="Trincomalee">Trincomalee</option>
+                    <option value="Vavuniya">Vavuniya</option>
+                  </select>
+
+                  {/* Duration */}
+                  <select
+                    value={selectedDuration}
+                    onChange={(e) => setSelectedDuration(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="">Select Duration</option>
+                    <option value="1 day">1 day</option>
+                    <option value="1-3 days">1-3 days</option>
+                    <option value="4-7 days">4-7 days</option>
+                  </select>
+
+                  {/* Tour Types */}
+                  <select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="">Select Tour Type</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Beach">Beach</option>
+                    <option value="Cultural">Cultural</option>
+                    {/* Add more tour types */}
+                  </select>
+
+                  {/* Sort By */}
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="">Sort By</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                  </select>
+
+                  {/* Clear Filters Button */}
+                  <button
+                    onClick={clearFilters}
+                    className="mt-4 px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-400 w-full"
+                  >
+                    Clear Filters
+                  </button>
                 </div>
-              </div>
-
-              {/* Location */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Location</h3>
-                <select
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="">All Locations</option>
-                  {locations.map(location => (
-                    <option key={location} value={location}>{location}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Duration */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Duration</h3>
-                <select
-                  value={selectedDuration}
-                  onChange={(e) => setSelectedDuration(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="">Any Duration</option>
-                  {durations.map(duration => (
-                    <option key={duration} value={duration}>{duration}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Tour Type */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Tour Type</h3>
-                <div className="space-y-2">
-                  {tourTypes.map(type => (
-                    <button
-                      key={type}
-                      onClick={() => handleTypeToggle(type)}
-                      className={`w-full px-4 py-2 rounded-lg border ${
-                        selectedTypes.includes(type)
-                          ? 'bg-blue-900 text-white border-blue-900'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-blue-900'
-                      }`}
-                    >
-                      {type}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Clear Filters */}
-              <button
-                onClick={clearFilters}
-                className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-              >
-                Clear Filters
-              </button>
-            </div>
-          </div>
-
-          {/* Tours Grid */}
-          <div className="lg:col-span-3">
-            {/* Sort Options */}
-            <div className="mb-6">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="" disabled selected>Sort by</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-              </select>
-            </div>
-
-            {/* Loading State */}
-            {isSearching && (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Searching tours...</p>
               </div>
             )}
+          </div>
 
-            {/* Tours Grid */}
-            {!isSearching && (
+          {/* Tours Section (Right Side) */}
+          <div className="w-full lg:w-3/4 ">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">Available Tours</h1>
+              <p className="text-xl text-gray-600">Find your perfect adventure</p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading tours...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-red-500">Error: {error}</p>
+              </div>
+            ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredTours.map((tour) => (
                   <div key={tour.id} className="bg-white rounded-xl shadow-md overflow-hidden">
                     <img 
-                      src={tour.image}
+                      src={`${imageUrl + tour.image}`}
                       alt={tour.title}
                       className="h-48 w-full object-cover"
                     />
                     <div className="p-6">
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">{tour.title}</h3>
-                      <p className="text-gray-600 mb-4">{tour.description}</p>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-sm text-gray-500">Duration: {tour.duration}</span>
-                        <span className="text-sm text-gray-500">Difficulty: {tour.difficulty}</span>
+                      <p className="text-gray-600 mb-2">{tour.description}</p>
+
+                      {/* Location, Duration, Type */}
+                      <div className="text-gray-500 text-sm mb-4">
+                        <p><strong>Location:</strong> {tour.location}</p>
+                        <p><strong>Duration:</strong> {tour.duration}</p>
+                        <p><strong>Type:</strong> {tour.tour_type}</p>
                       </div>
+
                       <div className="flex justify-between items-center">
                         <span className="text-blue-900 font-bold">${tour.price}</span>
                         <Link 
@@ -333,8 +290,7 @@ function Tours() {
               </div>
             )}
 
-            {/* Empty State */}
-            {!isSearching && filteredTours.length === 0 && (
+            {!loading && !error && filteredTours.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-600">No tours found matching your criteria.</p>
                 <button
@@ -348,8 +304,7 @@ function Tours() {
           </div>
         </div>
       </div>
-    </div>
-    <Footer/>
+      <Footer />
     </>
   );
 }

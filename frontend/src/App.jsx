@@ -14,14 +14,21 @@ import RequireAuth from './components/RequireAuth';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/Auth';  // Fixed: Import AuthProvider
 import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
+
+import BookingList from './pages/admin/BookingList';
+
+import {default as ShowTours} from './pages/admin/tours/Show';
+import {default as CreateTours} from './pages/admin/tours/Create';
+import {default as EditTours} from './pages/admin/tours/Edit';
+import Overview from './pages/admin/Overview';
 
 function App() {
   return (
-    <AuthProvider> {/* Wrapped entire app inside AuthProvider */}
+    <AuthProvider> 
       <BrowserRouter>
         <div className="min-h-screen">
           <Routes>
+
             {/* User Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/tours" element={<Tours />} />
@@ -35,19 +42,47 @@ function App() {
             
           
 
-            <Route path="/booking" element={
+            <Route path="/booking/:tourId" element={
             <RequireAuth allowedRoles={["user"]}>
               <Booking />
             </RequireAuth>
           } />
+          
 
            {/* Admin Routes */}
-           <Route path="/admin/login" element={<AdminLogin/>} />
-          <Route path="/admin/dashboard" element={
+            <Route path="/admin/login" element={<AdminLogin/>} />
+
+            <Route path="/admin/dashboard" element={
             <RequireAuth allowedRoles={["admin"]}>
-              <AdminDashboard/>
+              <Overview/>
             </RequireAuth>
-          } />
+            } />
+
+            <Route path="/admin/tours" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <ShowTours/>
+            </RequireAuth>
+            } />
+
+            <Route path="/admin/tours/create" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <CreateTours/>
+            </RequireAuth>
+            } />
+
+            <Route path="/admin/tours/edit/:id" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <EditTours/>
+            </RequireAuth>
+            } />
+
+            <Route path="/admin/bookinglist" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <BookingList/>
+            </RequireAuth>
+            } />
+          
+           
 
           </Routes>
         </div>

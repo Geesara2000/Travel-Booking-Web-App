@@ -38,7 +38,7 @@ function Login() {
 
       if (result.role === "user") {
         toast.success(result.message)
-        navigate("/booking");
+        navigate("/");
       } else {
         navigate("/"); // Prevent admins from logging in here
       }

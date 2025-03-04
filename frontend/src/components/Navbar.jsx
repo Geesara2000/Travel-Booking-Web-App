@@ -6,7 +6,7 @@ import Logo from '../assets/logo.png';
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, logout } = useContext(AuthContext); // Get user and logout function from AuthContext
+  const { user, logoutUser } = useContext(AuthContext); // Get user and logout function from AuthContext
 
   const isActive = (path) => {
     return location.pathname === path ? "text-blue-600 md:border-b-2 md:border-blue-600" : "text-gray-900";
@@ -32,7 +32,7 @@ function Navbar() {
 
             {user ? (
               <button 
-                onClick={logout} 
+                onClick={logoutUser} 
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
               >
                 Logout
@@ -90,7 +90,7 @@ function Navbar() {
           <hr />
           {user ? (
             <button 
-              onClick={logout} 
+              onClick={logoutUser} 
               className="block w-full text-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
             >
               Logout

@@ -1,4 +1,5 @@
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 function About() {
   const team = [
@@ -21,6 +22,7 @@ function About() {
 
   return (
    <>
+   <Navbar/>
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="bg-blue-900 text-white py-20">

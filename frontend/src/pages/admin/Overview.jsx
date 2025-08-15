@@ -51,7 +51,7 @@ const Overview = () => {
                 {[
                   { label: 'Total Bookings', value: stats.totalBookings },
                   { label: 'Total Users', value: stats.totalUsers },
-                  { label: 'Total Revenue', value: `$${stats.totalRevenue}` },
+                  { label: 'Total Revenue', value: `LKR ${stats.totalRevenue}` },
                 ].map((stat, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">{stat.label}</td>

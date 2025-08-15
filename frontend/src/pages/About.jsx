@@ -1,22 +1,26 @@
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import Member1 from '../assets/member1.jpg';
+import Member2 from '../assets/member2.jpg';
+import Member3 from '../assets/member3.jpg';
+import Team from '../assets/team.png';
 
 function About() {
   const team = [
     {
       name: "John Doe",
       role: "Founder & CEO",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3"
+      image: Member1
     },
     {
       name: "Jane Smith",
       role: "Tour Director",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3"
+      image: Member2
     },
     {
       name: "Mike Johnson",
       role: "Head Guide",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3"
+      image: Member3
     }
   ];
 
@@ -27,7 +31,7 @@ function About() {
       {/* Hero Section */}
       <div className="bg-blue-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">About PiyapathTravels</h1>
+          <h1 className="text-4xl font-bold mb-4">About Us</h1>
           <p className="text-xl">Your trusted partner in adventure and discovery</p>
         </div>
       </div>
@@ -47,7 +51,7 @@ function About() {
             </div>
             <div className="rounded-xl overflow-hidden shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3" 
+                src= {Team}
                 alt="Team Meeting"
                 className="w-full h-full object-cover"
               />

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../http';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../context/Auth';
+import Logo from '../../assets/logo.png';
 
 
 function AdminLogin() {
@@ -48,6 +49,7 @@ function AdminLogin() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-md p-8">
         <div className="text-center mb-8">
+         <img src={Logo} alt="Admin Logo" className="w-40 h-40 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
           <p className="mt-2 text-gray-600">Sign in to access the admin panel</p>
         </div>

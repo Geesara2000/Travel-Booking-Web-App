@@ -16,12 +16,12 @@ class AdminController extends Controller
             'password' => 'required|string|min:6|max:255'
         ]);
 
-        $admin = User::where('email', $request->email)->where('role', 'admin')->first(); // Only check admins
+        $admin = User::where('email', $request->email)->where('role', 'admin')->first();
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid admin credentials'
+                'message' => 'Either admin email/password is incorrect'
             ]);
         }
 

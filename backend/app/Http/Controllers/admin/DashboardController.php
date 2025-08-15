@@ -17,7 +17,7 @@ class DashboardController extends Controller
 
         return response()->json([
             'totalBookings' => $totalBookings,
-            'totalUsers' => $totalUsers,
+            'totalUsers' => $totalUsers-1,
             'totalRevenue' => $totalRevenue,
         ]);
     }

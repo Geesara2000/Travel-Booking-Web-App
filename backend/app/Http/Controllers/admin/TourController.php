@@ -32,7 +32,7 @@ class TourController extends Controller
             'location' => 'required|string|max:255', // New field
             'duration' => 'required|string|max:255',  // New field
             'tour_type' => 'required|string|max:255', // New field
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
         $imagePath = null;
@@ -82,7 +82,7 @@ class TourController extends Controller
         'location' => 'required|string|max:255', // New field
         'duration' => 'required|string|max:255',  // New field
         'tour_type' => 'required|string|max:255', // New field
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
     ]);
 
     // Handle image update

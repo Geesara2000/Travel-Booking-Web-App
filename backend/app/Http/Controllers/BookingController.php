@@ -20,7 +20,10 @@ class BookingController extends Controller
 
         $booking = Booking::create($request->all());
 
-        return response()->json(['message' => 'Booking successful!', 'booking' => $booking], 201);
+        return response()->json([
+            'message' => 'Booking successful!',
+            'booking' => $booking
+            ], 201);
     }
 
     // Get all bookings

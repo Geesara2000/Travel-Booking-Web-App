@@ -17,3 +17,5 @@ class Tour extends Model
 
 
 }
+
+//6393|lkHDvTEjHDShJGcJaD4yjRg4xsSoduoYYBHcS6Dl6138bf2a

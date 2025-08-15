@@ -53,6 +53,8 @@ function Edit() {
           Authorization: `Bearer ${adminToken()}`,
         }
       });
+      const result = await response.json();
+console.log(result);
 
       if (!response.ok) throw new Error('Failed to update tour');
       navigate('/admin/tours');
@@ -105,9 +107,13 @@ function Edit() {
                   {...register('location', { required: 'Location is required' })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="Colombo">Colombo</option>
+                   <option value="Colombo">Colombo</option>
                   <option value="Galle">Galle</option>
-                  <option value="Gampaha">Gampaha</option>
+                  <option value="kandy">kandy</option>
+                  <option value="Nuwara Eliya">Nuwara Eliya</option>
+                  <option value="Matara">Matara</option>
+                  <option value="Ratnapura">Ratnapura</option>
+                  <option value="Jaffna">Jaffna</option>
                 </select>
               </div>
             </div>
@@ -121,8 +127,8 @@ function Edit() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="1 day">1 day</option>
-                  <option value="1-3 days">1-3 days</option>
-                  <option value="4-7 days">4-7 days</option>
+                  <option value="2 days">2 days</option>
+                  <option value="3 days">3 days</option>
                 </select>
               </div>
 
@@ -134,7 +140,8 @@ function Edit() {
                 >
                   <option value="Adventure">Adventure</option>
                   <option value="Beach">Beach</option>
-                  <option value="Cultural">Cultural</option>
+                  <option value="Nature">Nature</option>
+                  <option value="Caltural">Caltural</option>
                 </select>
               </div>
             </div>

@@ -7,7 +7,6 @@ import { apiUrl, imageUrl } from '../pages/http';
 
 function Tours() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -76,10 +75,6 @@ function Tours() {
         result = searchTours(searchQuery, result);
       }
 
-      result = result.filter(tour => 
-        tour.price >= priceRange.min && tour.price <= priceRange.max
-      );
-
       if (selectedLocation) {
         result = result.filter(tour => tour.location === selectedLocation);
       }
@@ -103,11 +98,10 @@ function Tours() {
     }, 300);
 
     debouncedFilter();
-  }, [searchQuery, priceRange, selectedLocation, selectedDuration, selectedType, sortBy, searchTours, tours]);
+  }, [searchQuery, selectedLocation, selectedDuration, selectedType, sortBy, searchTours, tours]);
 
   const clearFilters = () => {
     setSearchQuery('');
-    setPriceRange({ min: 0, max: 1000 });
     setSelectedLocation('');
     setSelectedDuration('');
     setSelectedType('');
@@ -120,9 +114,8 @@ function Tours() {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row">
           
-         
-         {/* Filter Section (Left Side) */}
-         <div className="w-full lg:w-1/4 mb-6 lg:mb-0 lg:mr-8">
+          {/* Filter Section (Left Side) */}
+          <div className="w-full lg:w-1/4 mb-6 lg:mb-0 lg:mr-8">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-600 w-full mb-6 flex items-center justify-center"
@@ -132,7 +125,7 @@ function Tours() {
             </button>
 
             {showFilters && (
-              <div className="bg-white p-6 rounded-lg  shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="space-y-4">
                   {/* Search */}
                   <input
@@ -142,20 +135,6 @@ function Tours() {
                     placeholder="Search tours..."
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
-
-                  {/* Price Range */}
-                  <div className="flex justify-between items-center">
-                    <label>Price Range</label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1000"
-                      value={priceRange.max}
-                      onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                      className="w-2/3"
-                    />
-                    <span>${priceRange.max}</span>
-                  </div>
 
                   {/* Location */}
                   <select
@@ -199,8 +178,8 @@ function Tours() {
                   >
                     <option value="">Select Duration</option>
                     <option value="1 day">1 day</option>
-                    <option value="1-3 days">1-3 days</option>
-                    <option value="4-7 days">4-7 days</option>
+                    <option value="2 days">2 days</option>
+                    <option value="3 days">3 days</option>
                   </select>
 
                   {/* Tour Types */}
@@ -212,6 +191,7 @@ function Tours() {
                     <option value="">Select Tour Type</option>
                     <option value="Adventure">Adventure</option>
                     <option value="Beach">Beach</option>
+                    <option value="Nature">Nature</option>
                     <option value="Cultural">Cultural</option>
                     {/* Add more tour types */}
                   </select>
@@ -266,17 +246,27 @@ function Tours() {
                     />
                     <div className="p-6">
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">{tour.title}</h3>
-                      <p className="text-gray-600 mb-2">{tour.description}</p>
+                      <p className="text-gray-600 mb-2">
+                        {tour.description.split(" ").slice(0, 10).join(" ")}...
+                      </p>
 
                       {/* Location, Duration, Type */}
                       <div className="text-gray-500 text-sm mb-4">
+                        <p className={`text-sm font-semibold px-2 inline-flex rounded-full 
+                          ${
+                            tour.status === 'Available' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                              {tour.status}
+                        </p>
                         <p><strong>Location:</strong> {tour.location}</p>
                         <p><strong>Duration:</strong> {tour.duration}</p>
                         <p><strong>Type:</strong> {tour.tour_type}</p>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-blue-900 font-bold">${tour.price}</span>
+                        <span className="text-blue-900 font-bold">LKR {tour.price}</span>
                         <Link 
                           to={`/tours/${tour.id}`}
                           className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-600 transition-colors"

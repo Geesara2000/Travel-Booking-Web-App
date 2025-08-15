@@ -54,12 +54,24 @@ function Home() {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{tour.title.toUpperCase()}</h3>
-                  <p className="text-gray-600 mb-2">{tour.description}</p>
+                  <p className="text-gray-600 mb-2">
+                     {tour.description.split(" ").slice(0, 15).join(" ")}...
+                  </p>
+                  
+
+                  <p className={`text-sm font-semibold px-2 inline-flex rounded-full 
+                  ${
+                    tour.status === 'Available' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                      {tour.status}
+                  </p>
                   <p className="text-sm text-gray-500"><strong>Duration:</strong> {tour.duration}</p>
                   <p className="text-sm text-gray-500"><strong>Location:</strong> {tour.location}</p>
                   <p className="text-sm text-gray-500 mb-4"><strong>Tour Type:</strong> {tour.tour_type}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-blue-900 font-bold">${tour.price}</span>
+                    <span className="text-blue-900 font-bold">LKR {tour.price}</span>
                     <Link 
                         to={`/tours/${tour.id}`}
                         className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-600 transition-colors"

@@ -12,7 +12,6 @@ class UserController extends Controller
 
     public function register(Request $request)
 {
-    try {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
@@ -39,30 +38,25 @@ class UserController extends Controller
                 'message' => 'Something went wrong during registration'
             ]);
         }
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => $e->getMessage()
-        ]); // Internal Server Error
-    }
+
 }
 
 
 
     public function login(Request $request)
 {
-    try {
+
         $request->validate([
             'email' => 'required|email|max:255',
-            'password' => 'required|string|max:255'
+            'password' => 'required|string|min:6|max:255'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->where('role', 'user')->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Either email/password is incorrect'
+                'message' => 'Either user email/password is incorrect'
             ]);
         }
 
@@ -76,15 +70,8 @@ class UserController extends Controller
             'role' => $user->role,
             'token' => $token
         ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'An error occurred during login: ' . $e->getMessage()
-        ], 500); // Internal Server Error
-    }
+
 }
-
-
 
 
     public function logout(Request $request){

@@ -61,7 +61,7 @@ function ShowBookings() {
                     <td className="px-2 py-4 whitespace-nowrap">{booking.tour.title}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{booking.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{new Date(booking.date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">${booking.price}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">LKR {booking.price}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{booking.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{booking.phone}</td>
               

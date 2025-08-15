@@ -18,7 +18,7 @@ Route::get('/dashboard-stats', [DashboardController::class, 'getStats']);
 
 // Protected Routes (Requires Authentication)
 Route::middleware(['auth:sanctum'])->group(function () {
- 
+
     // Routes Only for Admins
     Route::middleware(['admin'])->group(function () {
         Route::post('/tours', [TourController::class, 'store']); // Create a tour
